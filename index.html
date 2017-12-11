@@ -74,7 +74,7 @@
 
                 <div class="panel panel-success">
                     <div class="panel-heading text-center">Decoded message</div>
-                    <div class="panel-body" id="decdmsg">
+                    <div class="panel-body text-center" id="decdmsg" style="font-size:30px;">
 
                     </div>
                 </div>
@@ -227,10 +227,11 @@
                         if (!isArray(elem)) {
                             console.log(elem);
                             result.push(elem);
+                            decoded.innerHTML = result.join("");
                         }
                     },
                     () => { decoded.innerHTML = result.join(""); },
-                    { delay: 300 }
+                    { delay: 50 }
                 );
 
                 /*
