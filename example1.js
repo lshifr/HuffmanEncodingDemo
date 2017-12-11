@@ -1,8 +1,5 @@
 var labelType, useGradients, nativeTextSupport, animate;
 
-var st;
-var json;
-
 (function() {
   var ua = navigator.userAgent,
       iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
@@ -29,19 +26,15 @@ var Log = {
 };
 
 
-document.addEventListener("DOMContentLoaded", ready);
 
-function ready(){
-    init(enc);
-}
 
 function init(encodedMessage){
     //init data
-    json = huffmanTreeToJSON(encodedMessage.tree);
+    var json = huffmanTreeToJSON(encodedMessage.tree);
    
     //init Spacetree
     //Create a new ST instance
-    /*var*/ st = new $jit.ST({
+    var st = new $jit.ST({
         levelsToShow: 100,
 
         constrained: false,
@@ -124,7 +117,6 @@ function init(encodedMessage){
             //add some color to the nodes in the path between the
             //root node and the selected node.
 
-            //console.log(node);
 
             if(node.name){
                 node.data.$color = "#ff7";
@@ -182,7 +174,8 @@ function init(encodedMessage){
 
     st.onClick(st.root);
     
-    
+    return st;
+
     //end
 
 }

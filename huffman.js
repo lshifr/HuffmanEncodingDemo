@@ -268,19 +268,3 @@ function huffmanTreeToJSON(tree){
     traverse(tree, result);
     return result.children[0];
 }
-
-var msg = "She sells sea shells by the sea shore";
-
-let enc = huffmanEncode(msg);
-
-
-
-console.log(enc);
-console.log("\n\n\n ------- Synchronouse decoding ------- \n\n");
-huffmanDecodeGen(enc, elem => { console.log(elem) });
-console.log("\n\n\n ------- Async decoding ------- \n\n");
-huffmanDecodeGenAsync(enc, elem => { console.log(elem) });
-
-
-
-console.log(huffmanTreeToJSON(enc.tree));

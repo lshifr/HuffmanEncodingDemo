@@ -38,7 +38,7 @@
     <script src="jit-yc.js"></script>
 
     <!-- Example File -->
-    
+
     <script src="huffman.js"></script>
     <script src="example1.js"></script>
 
@@ -69,6 +69,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", ready);
+
+        function ready() {
+
+            var msg = "She sells sea shells by the sea shore";
+
+            let enc = huffmanEncode(msg);
+
+            /*
+            console.log(enc);
+            console.log("\n\n\n ------- Synchronouse decoding ------- \n\n");
+            huffmanDecodeGen(enc, elem => { console.log(elem) });
+            console.log("\n\n\n ------- Async decoding ------- \n\n");
+            huffmanDecodeGenAsync(enc, elem => { console.log(elem) });
+            */
+
+            console.log(huffmanTreeToJSON(enc.tree));
+
+            var st  = init(enc);
+
+        }
+
+    </script>
 
 </body>
 
