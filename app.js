@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", ready);
 
+// Space Tree object
 var st;
 
 function ready() {
@@ -74,7 +75,7 @@ function ready() {
     //showDecodingInConsole();
 }
 
-function showDecodingInConsole() {
+function showDecodingInConsole() {  // A helper function
     let enc = huffmanEncode(input.value);
     console.log(enc);
     console.log("\n\n\n ------- Synchronouse decoding ------- \n\n");

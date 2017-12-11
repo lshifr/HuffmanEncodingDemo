@@ -19,6 +19,7 @@
     color:green; 
     font-weight:bold; 
     background-color:#FFDAB9;
+    border-radius: 4px;
 }
 
 .decoded-message{
