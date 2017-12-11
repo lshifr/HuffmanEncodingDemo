@@ -29,31 +29,23 @@ var Log = {
 };
 
 
-function init(){
+document.addEventListener("DOMContentLoaded", ready);
+
+function ready(){
+    init(enc);
+}
+
+function init(encodedMessage){
     //init data
-    json = {
-        id: "node02",
-        name: "0.2",
-        data: {},
-        children: [
-            {
-                id: "node03",
-                name: "0.2",
-                data: {},
-                children:[]
-            },
-            {
-                id: "node04",
-                name: "0.2",
-                data: {},
-                children:[]
-            }    
-        ]
-    };
-    //end
+    json = huffmanTreeToJSON(encodedMessage.tree);
+   
     //init Spacetree
     //Create a new ST instance
     /*var*/ st = new $jit.ST({
+        levelsToShow: 100,
+
+        constrained: false,
+
         //id of viz container element
         injectInto: 'infovis',
         //set duration for the animation
@@ -63,10 +55,12 @@ function init(){
         //set distance between node and its children
         levelDistance: 50,
         //enable panning
+        
         Navigation: {
           enable:true,
           panning:true
         },
+        
         //set node and edge styles
         //set overridable=true for styling individual
         //nodes or edges
@@ -101,15 +95,15 @@ function init(){
             label.id = node.id;            
             label.innerHTML = node.name;
 
-            /*
+            
             label.onclick = function(){
-            	if(normal.checked) {
+            	if(/* normal.checked */ true) {
             	  st.onClick(node.id);
             	} else {
                 st.setRoot(node.id, 'animate');
             	}
             };
-            */
+            
             //set label styles
             var style = label.style;
             style.width = 60 + 'px';
@@ -130,7 +124,9 @@ function init(){
             //add some color to the nodes in the path between the
             //root node and the selected node.
 
-            if(node.id === "node03"){
+            //console.log(node);
+
+            if(node.name){
                 node.data.$color = "#ff7";
             }
 
@@ -163,6 +159,8 @@ function init(){
         //Edge data proprties prefixed with a dollar sign will
         //override the Edge global style properties.
         onBeforePlotLine: function(adj){
+
+            
             if (adj.nodeFrom.selected && adj.nodeTo.selected) {
                 adj.data.$color = "#eed";
                 adj.data.$lineWidth = 3;
@@ -171,6 +169,7 @@ function init(){
                 delete adj.data.$color;
                 delete adj.data.$lineWidth;
             }
+            
         }
     });
     //load json data
