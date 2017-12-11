@@ -90,6 +90,13 @@ function getEncodings(tree) {
     return result;
 }
 
+
+/**
+ * Main function to perform Huffman encoding of the message. Takes a message string
+ * to encode. Returns an object with the tree and encoded message
+ * 
+ * @param {*} msg 
+ */ 
 function huffmanEncode(msg) {
     let chars = msg.toLowerCase().split("");
     let tree = getHuffmanTree(chars);
@@ -101,6 +108,8 @@ function huffmanEncode(msg) {
     }
 }
 
+
+// Traditionally written synchronous decoder
 function huffmanDecode(encoded) {
     let root = encoded.tree;
     let encmsg = encoded.encodedMessage;
@@ -125,7 +134,15 @@ function huffmanDecode(encoded) {
     }
 }
 
-// Generator to construct infinite Huffman tree iterator driven by encoded message
+
+/**
+ * Generator to construct infinite Huffman tree iterator driven by encoded message.
+ * Note: this generator does not yield promises
+ * 
+ * @param {*} root 
+ * @param {*} node 
+ * @param {*} step 
+ */
 function* treeIterate(root, node, step) {
     let nextStep;
     if (isArray(node)) {
@@ -141,8 +158,17 @@ function* treeIterate(root, node, step) {
     }
 }
 
-// The 'action' function should return a promise, that would resolve into the next step,
-// or an object from which one can extract the next step
+
+/**
+ * Generator to construct infinite Huffman tree iterator driven by encoded message.
+ * Yields promises 
+ * 
+ * @param {*} root  - root node of the Huffman tree
+ * @param {*} node  - current node being iterated over
+ * @param {*} step  - a binary integer (0 or 1) to pick the left or right branch of the Huffman tree
+ * @param {*} action  - a function to be applied to the node. Should return a promise that would 
+ * resolve into the next step, or an object from which one can extract the next step
+ */
 function* treeIterateWithAction(root, node, step, action) {
     let nextStep;
     if (isArray(node)) {
@@ -158,19 +184,30 @@ function* treeIterateWithAction(root, node, step, action) {
 }
 
 
+function huffmanDecodeGen(encoded, f){
+    let root = encoded.tree;
+    let encmsg = encoded.encodedMessage.slice();
 
-function huffmanDecodeGen(encoded, action) {
+    function action(val){
+        if(val.value !== undefined){  // Only do something with the leaves 
+            f(val.value);
+        }
+    }
+
+    let treeIt = treeIterate(root, root, encmsg.shift());
+    action(treeIt.next());
+    while(encmsg.length > 0){
+        action(treeIt.next(encmsg.shift()));
+    };
+}
+
+
+function huffmanDecodeGenAsync(encoded, action) {
     let root = encoded.tree;
     let encmsg = encoded.encodedMessage;
 
-    /*
-    function applyf(val){
-        if(val.value){
-            f(val.value)
-        }
-    }
-    */
-
+    // A function to model async. operations happening in between Huffman tree
+    // traversal steps
     function asyncAction(val) {
         return new Promise((resolve, reject) => {
             if (isArray(val)) {
@@ -184,16 +221,8 @@ function huffmanDecodeGen(encoded, action) {
         });
     }
 
-    /*
-    function handle(iter, next){
-        if(!next.done){
-            next.value.then(resp => handle(iter, iter.next(resp)));
-        } else {
-
-        }
-    }
-    */
-
+    // Coroutine helper to resolve promises and feed results back into the Huffman
+    // tree traversal generator
     let coroutine = (genIt) => {
         const handle = (result) => {
             if(result.done){
@@ -206,56 +235,20 @@ function huffmanDecodeGen(encoded, action) {
         return handle(genIt.next());
     }
 
-    let treeIt = treeIterateWithAction(root, root, encmsg.shift(), asyncAction);
-    //applyf(treeIt.next());
-
-    coroutine(treeIt);
-
-    /*
-    treeIt.next().value
-        .then(resp => treeIt.next(resp).value)
-        .then(resp => treeIt.next(resp).value)
-        .then(resp => treeIt.next(resp).value)
-        .then(resp => treeIt.next(resp).value)
-        .then(resp => treeIt.next(resp).value)
-        .then(resp => treeIt.next(resp).value)
-        .then(resp => treeIt.next(resp).value)
-        .then(resp => treeIt.next(resp).value)
-    */
-    /*    
-    for(let i = 1; i < encmsg.length; i++){
-        let result = treeIt.next(encmsg[i]);
-        if(result.value){
-            console.log(result.value);
-        }    
-    }
-    */
-
+    coroutine(treeIterateWithAction(root, root, encmsg.shift(), asyncAction));
 }
 
 
 var msg = "She sells sea shells by the sea shore";
-var chars = msg.toLowerCase().split("");
-//var sorted = sortedBy(freqs(chars), el => el.frequency);
-var tree = getHuffmanTree(chars);
 
-//console.log(sorted);
-//console.log(tree);
-console.log(getEncodings(tree));
 let enc = huffmanEncode(msg);
 console.log(enc);
-//huffmanDecode(huffmanEncode(msg));
 
-/*
-let treeIt = treeIterate(enc.tree, enc.tree, enc.encodedMessage[0]);
-console.log(treeIt.next());
-for(let i = 1; i < enc.encodedMessage.length; i++){
-    let result = treeIt.next(enc.encodedMessage[i]);
-    if(result.value){
-        console.log(result.value);
-    }    
-}
-*/
+console.log("\n\n\n ------- Synchronouse decoding ------- \n\n");
 
 huffmanDecodeGen(enc, elem => { console.log(elem) });
+
+console.log("\n\n\n ------- Async decoding ------- \n\n");
+
+huffmanDecodeGenAsync(enc, elem => { console.log(elem) });
 
