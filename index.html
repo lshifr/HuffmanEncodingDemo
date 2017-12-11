@@ -90,7 +90,7 @@
                             <div class="panel-heading">
                                 <div style="display:table">
                                     <div style="display:inline-block">Encoded message</div>
-                                    <button style="display:inline-block; margin-left: 30px;" class="btn btn-info">
+                                    <button style="display:inline-block; margin-left: 30px;" class="btn btn-info" id="decodebtn">
                                         Decode
                                     </button>
                                 </div>
@@ -133,10 +133,14 @@
         function ready() {
 
             const inputButton = document.querySelector("#encodebtn");
+            const decodeButton = document.querySelector("#decodebtn");
             const input = document.querySelector("#msginput");
             const canvas = document.querySelector("#infovis");
             const encoded = document.querySelector("#encmsg");
+            const decoded = document.querySelector("#decdmsg");
             let msg = "She sells sea shells by the sea shore";
+
+            let enc;
 
             function showDecodingInConsole(){
                 let enc = huffmanEncode(input.value);
@@ -149,9 +153,17 @@
 
             function messageEncode(message) {
                 canvas.innerHTML = "";
-                let enc = huffmanEncode(message);
+                enc = huffmanEncode(message);
                 encoded.innerHTML = enc.encodedMessage.join(" ");
                 st = init(enc);
+            }
+
+            function messageDecode(){
+                var result = [];
+                huffmanDecodeGen(enc, elem => {
+                    result.push(elem);
+                });
+                decoded.innerHTML = result.join("");
             }
 
             input.value = msg;
@@ -159,7 +171,12 @@
 
 
             inputButton.addEventListener('click', function () {
-                messageEncode(input.value)
+                messageEncode(input.value);
+                decoded.innerHTML = "";
+            });
+
+            decodeButton.addEventListener('click', function(){
+                messageDecode();
             });
 
 
