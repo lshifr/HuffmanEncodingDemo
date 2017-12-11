@@ -1,25 +1,4 @@
 
-function freqs(elems) {
-    let counters = {};
-    let result = [];
-    elems.forEach(function (el) {
-        if (!(el in counters)) {
-            counters[el] = 1;
-        } else {
-            counters[el] = counters[el] + 1;
-        }
-    });
-
-    for (let el in counters) {
-        result.push({ value: el, frequency: counters[el] })
-    };
-    return result;
-}
-
-function sortedBy(elems, f) {
-    return elems.slice().sort((a, b) => f(a) - f(b));
-}
-
 function combineNodes(nodes) {
     let copy = nodes.slice();
     if (copy.length <= 1) {
@@ -34,35 +13,9 @@ function combineNodes(nodes) {
     return sortedBy(copy, el => el.frequency);
 }
 
-function nestWhile(f, arg, cond) {
-    let res = arg;
-    while (cond(res)) {
-        res = f(res)
-    };
-    return res;
-}
-
 function getHuffmanTree(elems) {
-    let sorted = sortedBy(freqs(elems), el => el.frequency);
+    let sorted = sortedBy(tally(elems), el => el.frequency);
     return nestWhile(combineNodes, sorted, x => x.length > 1)[0].value;
-}
-
-function uniqueElems(elems) {
-    return freqs(elems).map(elem => elem.value);
-}
-
-function isArray(elem) {
-    return elem && elem.constructor.name === "Array";
-}
-
-function* flatten(nested) {
-    if (isArray(nested)) {
-        for (elem of nested) {
-            yield* flatten(elem)
-        }
-    } else {
-        yield nested;
-    }
 }
 
 function getEncodings(tree) {

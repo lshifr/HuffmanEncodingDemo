@@ -12,43 +12,25 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- CSS Files -->
-
-    <style>
-        #infovis {
-            position: relative;
-            width: 1000px;
-            height: 500px;
-            margin: auto;
-            overflow: hidden;
-        }
-
-        .encoded-message {
-            font-size: 25px;
-        }
-    </style>
-
-    <!-- JIT Library File -->
-    <script src="jit-yc.js"></script>
-
-    <!-- Example File -->
-
-    <script src="huffman.js"></script>
-    <script src="tree.js"></script>
+    <link href="style.css" rel="stylesheet">
 </head>
 
 <body>
 
     <div class="container-fluid">
         <h2 class="text-center" style="padding-bottom:30px">
-            Huffman encoding animation via generators
+            Huffman encoding animation using ES6 generators and promises
         </h2>
-
 
         <div class="row">
 
-
             <div class="col-md-9">
+                <div class="panel panel-success">
+                    <div class="panel-heading text-center">Decoded message</div>
+                    <div class="panel-body text-center" id="decdmsg" style="font-size:30px;">
 
+                    </div>
+                </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title text-center"> The Huffman tree </h3>
@@ -57,13 +39,6 @@
                         <div style="background-color:#1a1a1a;color:#ccc">
                             <div id="infovis"></div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="panel panel-success">
-                    <div class="panel-heading text-center">Decoded message</div>
-                    <div class="panel-body text-center" id="decdmsg" style="font-size:30px;">
-
                     </div>
                 </div>
             </div>
@@ -107,129 +82,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- JIT Library File -->
+    <script src="jit-yc.js"></script>
 
-    <script>
-
-        function partition(lst, size, step, tail) {
-            if (step === undefined) {
-                step = size;
-            }
-            var plen = Math.floor((lst.length - size) / step) + 1;
-            var res = [];
-            for (var i = 0; i < plen; i++) {
-                res[i] = lst.slice(step * i, step * i + size)
-            }
-            if (tail && (plen * size < lst.length)) {
-                res.push(lst.slice(plen * size, lst.length))
-            }
-            return res
-        };
-
-        document.addEventListener("DOMContentLoaded", ready);
-
-        var st;
-
-        function ready() {
-
-            const inputButton = document.querySelector("#encodebtn");
-            const decodeButton = document.querySelector("#decodebtn");
-            const input = document.querySelector("#msginput");
-            const canvas = document.querySelector("#infovis");
-            const encoded = document.querySelector("#encmsg");
-            const decoded = document.querySelector("#decdmsg");
-            let msg = "She sells sea shells by the sea shore";
-
-            let enc;
-
-            function showDecodingInConsole() {
-                let enc = huffmanEncode(input.value);
-                console.log(enc);
-                console.log("\n\n\n ------- Synchronouse decoding ------- \n\n");
-                huffmanDecodeGen(enc, elem => { console.log(elem) });
-                console.log("\n\n\n ------- Async decoding ------- \n\n");
-                huffmanDecodeGenAsync(enc, elem => { console.log(elem) }, () => { });
-            }
-
-            function makeEncodedDivHTML(index) {
-                let message = enc.encodedMessage;
-                let digitsPerRow = 10;
-                let partit = partition(message, digitsPerRow, digitsPerRow, true);
-                let result = '';
-                let ctr = 0;
-                partit.forEach(row => {
-                    let rowString = '';
-                    if (index !== undefined && index >= 0 && index < row.length) {
-                        if (index > 0) {
-                            rowString = row.slice(0, index).join(' ');
-                            rowString += ' ';
-                        }
-                        rowString += '<span style="color:green; font-weight:bold">' + row[index] + '</span>';
-                        rowString += ' ';
-                        rowString += row.slice(index + 1).join(" ");
-                    } else {
-                        rowString += row.join(' ');
-                    }
-                    rowString += '<br>';
-                    index -= row.length;
-                    result += rowString;
-                });
-                return result;
-            }
-
-            function messageEncode(message) {
-                canvas.innerHTML = "";
-                enc = huffmanEncode(message);
-                encoded.innerHTML = makeEncodedDivHTML();
-                st = init(enc); 
-            }
-
-            function messageDecode() {
-                var result = [];
-                var index = 0;
-
-                currentNodeID = null;
-                st.plot();
-
-                huffmanDecodeGenAsync(
-                    enc,
-                    elem => {
-                        encoded.innerHTML = makeEncodedDivHTML(index++);
-                        if (!isArray(elem)) {
-                            console.log(elem);
-                            result.push(elem);
-                            decoded.innerHTML = result.join("");
-                            if(index > 20 && index < 40){
-                                currentNodeID = "node_2";
-                            } else {
-                                currentNodeID = null;
-                            }
-                            st.plot();
-                        }
-                    },
-                    () => { decoded.innerHTML = result.join(""); },
-                    { delay: 300 }
-                );
-            }
-
-            input.value = msg;
-            messageEncode(msg);
-
-
-            inputButton.addEventListener('click', function () {
-                messageEncode(input.value);
-                decoded.innerHTML = "";
-            });
-
-            decodeButton.addEventListener('click', function () {
-                messageDecode();
-            });
-
-
-            //showDecodingInConsole();
-
-        }
-
-    </script>
-
+    <!-- App files -->
+    <script src="common.js"></script>
+    <script src="huffman.js"></script>
+    <script src="tree.js"></script>
+    <script src="app.js"></script>
+    
 </body>
 </html>
