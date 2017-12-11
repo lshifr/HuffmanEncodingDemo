@@ -25,7 +25,7 @@
     <style>
         #infovis {
             position: relative;
-            width: 600px;
+            width: 1000px;
             height: 600px;
             margin: auto;
             overflow: hidden;
@@ -47,19 +47,45 @@
 <body>
 
     <div class="container-fluid">
-        <h1>My First Bootstrap Page</h1>
-        <p>This is some text.</p>
+        <h2 class="text-center">Huffman encoding animation via generators </h2>
+
 
         <div class="row">
-            <div class="col-md-6">
-                <div style="background-color:#1a1a1a;color:#ccc">
-                    <div id="infovis"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"> Message encoding / decoding </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="msginput" placeholder="Enter a message to encode">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" id="encodebtn">Encode</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"> The Huffman tree </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div style="background-color:#1a1a1a;color:#ccc">
+                                <div id="infovis"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
-            <div class="col-md-6">
-                <h4> Message encoding / decoding</h4>
-            </div>
+
+
         </div>
         <div id="log"></div>
 
@@ -74,11 +100,32 @@
 
         document.addEventListener("DOMContentLoaded", ready);
 
+        var st;
+
         function ready() {
 
-            var msg = "She sells sea shells by the sea shore";
-
+            const inputButton = document.querySelector("#encodebtn");
+            const input = document.querySelector("#msginput");
+            const canvas = document.querySelector("#infovis");
+            let msg = "She sells sea shells by the sea shore";
+            input.value = msg;
             let enc = huffmanEncode(msg);
+            st = init(enc);
+
+            inputButton.addEventListener('click', function () {
+                canvas.innerHTML = "";
+                enc = huffmanEncode(input.value);
+                console.log(enc);
+                st = init(enc);
+            });
+
+
+            //console.log(huffmanTreeToJSON(enc.tree));
+
+
+
+
+
 
             /*
             console.log(enc);
@@ -88,9 +135,7 @@
             huffmanDecodeGenAsync(enc, elem => { console.log(elem) });
             */
 
-            console.log(huffmanTreeToJSON(enc.tree));
 
-            var st  = init(enc);
 
         }
 
