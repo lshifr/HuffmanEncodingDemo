@@ -196,7 +196,8 @@
             function messageEncode(message) {
                 canvas.innerHTML = "";
                 enc = huffmanEncode(message);
-                encoded.innerHTML = makeEncodedDivHTML(); 
+                encoded.innerHTML = makeEncodedDivHTML();
+                st = init(enc); 
             }
 
             function messageDecode() {
