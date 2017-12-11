@@ -239,16 +239,48 @@ function huffmanDecodeGenAsync(encoded, action) {
 }
 
 
+function huffmanTreeToJSON(tree){
+    let nodeCtr = 0;
+
+    function makeID(){
+        return "node_" + nodeCtr++;
+    }
+
+    function makeJSONNode(node){
+        return {
+            id: makeID(),
+            name: isArray(node)? "": ""+node,
+            data: {},
+            children: []
+        };
+    }
+
+    function traverse(node, parentJSON){
+        let newJSONNode = makeJSONNode(node);
+        if(isArray(node)){
+            traverse(node[0], newJSONNode);
+            traverse(node[1], newJSONNode);            
+        } 
+        parentJSON.children.push(newJSONNode);
+    }
+
+    let result = makeJSONNode(tree);
+    traverse(tree, result);
+    return result.children[0];
+}
+
 var msg = "She sells sea shells by the sea shore";
 
 let enc = huffmanEncode(msg);
+
+
+
 console.log(enc);
-
 console.log("\n\n\n ------- Synchronouse decoding ------- \n\n");
-
 huffmanDecodeGen(enc, elem => { console.log(elem) });
-
 console.log("\n\n\n ------- Async decoding ------- \n\n");
-
 huffmanDecodeGenAsync(enc, elem => { console.log(elem) });
 
+
+
+console.log(huffmanTreeToJSON(enc.tree));
