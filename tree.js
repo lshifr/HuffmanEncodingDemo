@@ -37,7 +37,7 @@ function init(encodedMessage){
     var st = new $jit.ST({
         levelsToShow: 100,
 
-        offsetY: 250,
+        offsetY: 200,
 
         constrained: false,
 

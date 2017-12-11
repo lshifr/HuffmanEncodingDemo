@@ -26,13 +26,13 @@
         #infovis {
             position: relative;
             width: 1000px;
-            height: 600px;
+            height: 500px;
             margin: auto;
             overflow: hidden;
         }
 
         .encoded-message {
-            font-size: 20px;
+            font-size: 25px;
         }
     </style>
 
@@ -52,7 +52,7 @@
 
     <div class="container-fluid">
         <h2 class="text-center" style="padding-bottom:30px">
-            Huffman encoding animation via generators 
+            Huffman encoding animation via generators
         </h2>
 
 
@@ -69,6 +69,13 @@
                         <div style="background-color:#1a1a1a;color:#ccc">
                             <div id="infovis"></div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-success">
+                    <div class="panel-heading text-center">Decoded message</div>
+                    <div class="panel-body" id="decdmsg">
+
                     </div>
                 </div>
             </div>
@@ -94,19 +101,12 @@
                                         Decode
                                     </button>
                                 </div>
-                                
+
                             </div>
-                            <div class="panel-body encoded-message" id="encmsg">
+                            <div class="panel-body encoded-message" id="encmsg" style="display:block">
 
                             </div>
                         </div>
-
-                        <div class="panel panel-success">
-                                <div class="panel-heading text-center">Decoded message</div>
-                                <div class="panel-body" id="decdmsg">
-    
-                                </div>
-                            </div>
 
                     </div>
                 </div>
@@ -126,6 +126,22 @@
 
     <script>
 
+
+        function partition(lst, size, step, tail) {
+            if (step === undefined) {
+                step = size;
+            }
+            var plen = Math.floor((lst.length - size) / step) + 1;
+            var res = [];
+            for (var i = 0; i < plen; i++) {
+                res[i] = lst.slice(step * i, step * i + size)
+            }
+            if (tail && (plen * size < lst.length)) {
+                res.push(lst.slice(plen * size, lst.length))
+            }
+            return res
+        };
+
         document.addEventListener("DOMContentLoaded", ready);
 
         var st;
@@ -142,28 +158,87 @@
 
             let enc;
 
-            function showDecodingInConsole(){
+            function showDecodingInConsole() {
                 let enc = huffmanEncode(input.value);
                 console.log(enc);
                 console.log("\n\n\n ------- Synchronouse decoding ------- \n\n");
                 huffmanDecodeGen(enc, elem => { console.log(elem) });
                 console.log("\n\n\n ------- Async decoding ------- \n\n");
-                huffmanDecodeGenAsync(enc, elem => { console.log(elem) });
+                huffmanDecodeGenAsync(enc, elem => { console.log(elem) }, () => { });
+            }
+
+            function makeEncodedDivHTML(index) {
+                let message = enc.encodedMessage;
+                let digitsPerRow = 10;
+                let partit = partition(message, digitsPerRow, digitsPerRow, true);
+                let result = '';
+                let ctr = 0;
+                partit.forEach(row => {
+                    let rowString = '';
+                    if (index !== undefined && index >= 0 && index < row.length) {
+                        if (index > 0) {
+                            rowString = row.slice(0, index).join(' ');
+                            rowString += ' ';
+                        }
+                        rowString += '<span style="color:green; font-weight:bold">' + row[index] + '</span>';
+                        rowString += ' ';
+                        rowString += row.slice(index + 1).join(" ");
+                    } else {
+                        rowString += row.join(' ');
+                    }
+                    rowString += '<br>';
+                    index -= row.length;
+                    result += rowString;
+                });
+
+
+                /*
+                let result = "<p>";// '<div style="display:block">'
+                //result += '<div style="display:inline-block">';
+                result += message.slice(0, index - 1).join("");
+                //result += '</div>';
+                result += '<b style="color:green;display:inline-block">';
+                result += message[index];
+                result += '</b>';
+                //result += '<div style="display:inline-block">';
+                result += message.slice(index + 1).join("");
+                //result += '</div>';
+                //result += '</div>'
+                result += '</p>';
+                */
+                return result;
             }
 
             function messageEncode(message) {
                 canvas.innerHTML = "";
                 enc = huffmanEncode(message);
-                encoded.innerHTML = enc.encodedMessage.join(" ");
+                encoded.innerHTML = makeEncodedDivHTML(); //enc.encodedMessage.join(" ");
                 st = init(enc);
             }
 
-            function messageDecode(){
+            function messageDecode() {
                 var result = [];
+                var index = 0;
+
+                huffmanDecodeGenAsync(
+                    enc,
+                    elem => {
+                        encoded.innerHTML = makeEncodedDivHTML(index++);
+                        if (!isArray(elem)) {
+                            console.log(elem);
+                            result.push(elem);
+                        }
+                    },
+                    () => { decoded.innerHTML = result.join(""); },
+                    { delay: 300 }
+                );
+
+                /*
                 huffmanDecodeGen(enc, elem => {
                     result.push(elem);
                 });
-                decoded.innerHTML = result.join("");
+                */
+                //decoded.innerHTML = result.join("");
             }
 
             input.value = msg;
@@ -175,7 +250,7 @@
                 decoded.innerHTML = "";
             });
 
-            decodeButton.addEventListener('click', function(){
+            decodeButton.addEventListener('click', function () {
                 messageDecode();
             });
 

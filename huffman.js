@@ -202,31 +202,38 @@ function huffmanDecodeGen(encoded, f){
 }
 
 
-function huffmanDecodeGenAsync(encoded, action) {
+function huffmanDecodeGenAsync(encoded, action, callback, settings) {
     let root = encoded.tree;
-    let encmsg = encoded.encodedMessage;
+    let encmsg = encoded.encodedMessage.slice();
+    let delay = (settings && settings.delay) || 1000;
 
     // A function to model async. operations happening in between Huffman tree
     // traversal steps
     function asyncAction(val) {
         return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                action(val);
+                resolve(encmsg.shift())
+            }, delay);
+            /*
             if (isArray(val)) {
                 resolve(encmsg.shift())
             } else {
                 setTimeout(() => {
                     action(val);
                     resolve(encmsg.shift())
-                }, 1000);
+                }, delay);
             }
+            */
         });
     }
 
     // Coroutine helper to resolve promises and feed results back into the Huffman
     // tree traversal generator
-    let coroutine = (genIt) => {
+    let coroutine = (genIt, callback) => {
         const handle = (result) => {
             if(result.done){
-                return Promise.resolve(result.value);
+                return Promise.resolve(result.value).then(res => callback(res));
             } else{
                 return Promise.resolve(result.value).then(res => handle(genIt.next(res))) 
             }
@@ -235,7 +242,7 @@ function huffmanDecodeGenAsync(encoded, action) {
         return handle(genIt.next());
     }
 
-    coroutine(treeIterateWithAction(root, root, encmsg.shift(), asyncAction));
+    coroutine(treeIterateWithAction(root, root, encmsg.shift(), asyncAction), callback);
 }
 
 
