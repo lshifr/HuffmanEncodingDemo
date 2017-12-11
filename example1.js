@@ -37,6 +37,8 @@ function init(encodedMessage){
     var st = new $jit.ST({
         levelsToShow: 100,
 
+        offsetY: 250,
+
         constrained: false,
 
         //id of viz container element
