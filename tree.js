@@ -28,9 +28,7 @@ var Log = {
 };
 
 
-
-
-function init(encodedMessage){
+function initSpaceTree(encodedMessage){
     //init data
     var json = huffmanTreeToJSON(encodedMessage.tree);
    
@@ -121,26 +119,25 @@ function init(encodedMessage){
             //add some color to the nodes in the path between the
             //root node and the selected node.
 
+
             if(node.id === currentNodeID){
-                node.data.$color =  "#006400";
+                if(node.name){
+                    node.data.$color = "#FFA500";
+                } else {
+                    node.data.$color =  "#006400";
+                }
+            } else if(node.name){
+                node.data.$color = "#ff7";
             } else {
                 node.data.$color = '#aaa';
-            }
-
-            if(node.name){
-                node.data.$color = "#ff7";
-            }
-
-            
-
+            } 
 
             /*
 
             if (node.selected) {
                 node.data.$color = "#ff7";
             }
-            
-            
+                
 
             else {
                 delete node.data.$color;
@@ -187,7 +184,4 @@ function init(encodedMessage){
     st.onClick(st.root);
     
     return st;
-
-    //end
-
 }

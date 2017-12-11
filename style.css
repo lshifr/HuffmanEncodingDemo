@@ -6,6 +6,22 @@
     overflow: hidden;
 }
 
+.infovis-container{
+    background-color:#1a1a1a;
+    color:#ccc;
+}
+
 .encoded-message {
     font-size: 25px;
+}
+
+.highlight-step {
+    color:green; 
+    font-weight:bold; 
+    background-color:#FFDAB9;
+}
+
+.decoded-message{
+    font-size:30px;
+    color: rgb(133, 48, 63);
 }

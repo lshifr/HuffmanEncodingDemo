@@ -122,20 +122,25 @@ function* treeIterate(root, node, step) {
  * @param {*} action  - a function to be applied to the node. Should return a promise that would 
  * resolve into the next step, or an object from which one can extract the next step
  */
-function* treeIterateWithAction(root, node, step, action) {
-    let nextStep;
-    if (isArray(node)) {
-        let subNode = node[step];
-        nextStep = yield action(subNode);
-        if (nextStep === undefined) {
-            return;
-        }
-        yield* treeIterateWithAction(root, subNode, nextStep, action);
-    } else {
-        yield* treeIterateWithAction(root, root, step, action);
-    }
-}
 
+function makeAsyncTreeGenerator(){ // Need extra level to encapsulate path
+    let path = [];
+    return function* treeIterateWithAction(root, node, step, action) {
+        let nextStep;
+        if (isArray(node)) {
+            let subNode = node[step];
+            path.push(step);
+            nextStep = yield action(subNode, path);
+            if (nextStep === undefined) {
+                return;
+            }
+            yield* treeIterateWithAction(root, subNode, nextStep, action);
+        } else {
+            path = [];
+            yield* treeIterateWithAction(root, root, step, action);
+        }
+    }
+};
 
 function huffmanDecodeGen(encoded, f){
     let root = encoded.tree;
@@ -162,10 +167,10 @@ function huffmanDecodeGenAsync(encoded, action, callback, settings) {
 
     // A function to model async. operations happening in between Huffman tree
     // traversal steps
-    function asyncAction(val) {
+    function asyncAction(val, path) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                action(val);
+                action(val, path);
                 resolve(encmsg.shift())
             }, delay);
         });
@@ -185,20 +190,20 @@ function huffmanDecodeGenAsync(encoded, action, callback, settings) {
         return handle(genIt.next());
     }
 
-    coroutine(treeIterateWithAction(root, root, encmsg.shift(), asyncAction), callback);
+    coroutine(makeAsyncTreeGenerator()(root, root, encmsg.shift(), asyncAction), callback);
 }
 
 
+function makeNodeID(path){
+    return "node_" + path.map(el => el.toString()).join('');
+}
+
 function huffmanTreeToJSON(tree){
-    let nodeCtr = 0;
+    let path = [];
 
-    function makeID(){
-        return "node_" + nodeCtr++;
-    }
-
-    function makeJSONNode(node){
+    function makeJSONNode(node, path){
         return {
-            id: makeID(),
+            id: makeNodeID(path),
             name: isArray(node)? "": ""+node,
             data: {},
             children: []
@@ -206,15 +211,19 @@ function huffmanTreeToJSON(tree){
     }
 
     function traverse(node, parentJSON){
-        let newJSONNode = makeJSONNode(node);
+        let newJSONNode = makeJSONNode(node, path);
         if(isArray(node)){
+            path.push(0);
             traverse(node[0], newJSONNode);
-            traverse(node[1], newJSONNode);            
+            path.pop();
+            path.push(1);
+            traverse(node[1], newJSONNode);
+            path.pop();            
         } 
         parentJSON.children.push(newJSONNode);
     }
 
-    let result = makeJSONNode(tree);
+    let result = makeJSONNode(tree, []);
     traverse(tree, result);
     return result.children[0];
 }

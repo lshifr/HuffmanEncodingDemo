@@ -1,3 +1,8 @@
+function show(arg){
+    console.log(arg);
+    return arg;
+}
+
 function tally(elems) {
     let counters = {};
     let result = [];

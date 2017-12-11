@@ -11,6 +11,7 @@ function ready() {
     const encoded = document.querySelector("#encmsg");
     const decoded = document.querySelector("#decdmsg");
     const startMsg = "She sells sea shells by the sea shore";
+    const delay = 2000;
 
     let enc;
 
@@ -33,7 +34,7 @@ function ready() {
         refreshCanvas();
         enc = huffmanEncode(message);
         setEncodedMessage(makeEncodedDivHTML(enc));
-        st = init(enc);
+        st = initSpaceTree(enc);
     }
 
     function messageDecode(enc) {
@@ -42,26 +43,22 @@ function ready() {
         currentNodeID = null;
         st.plot();
 
-        function asyncDecodeCallback(elem) {
+        function asyncDecodeCallback(elem, path) {
             setEncodedMessage(makeEncodedDivHTML(enc, index++));
+            currentNodeID = makeNodeID(path);
             if (!isArray(elem)) {
-                console.log(elem);
                 result.push(elem);
                 setDecodedMessage(result.join(""));
-                if (index > 20 && index < 40) {
-                    currentNodeID = "node_2";
-                } else {
-                    currentNodeID = null;
-                }
-                st.plot();
             }
+            //st.compute();
+            st.plot();
         }
 
         huffmanDecodeGenAsync(
             enc,
             asyncDecodeCallback,
             () => { setDecodedMessage(result.join("")); },
-            { delay: 300 }
+            { delay: delay }
         );
     }
 
@@ -99,7 +96,7 @@ function makeEncodedDivHTML(enc, index) {
                 rowString = row.slice(0, index).join(' ');
                 rowString += ' ';
             }
-            rowString += '<span style="color:green; font-weight:bold">' + row[index] + '</span>';
+            rowString += '<span class="highlight-step">' + row[index] + '</span>';
             rowString += ' ';
             rowString += row.slice(index + 1).join(" ");
         } else {
