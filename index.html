@@ -30,6 +30,10 @@
             margin: auto;
             overflow: hidden;
         }
+
+        .encoded-message {
+            font-size: 20px;
+        }
     </style>
 
     <!--[if IE]><script language="javascript" type="text/javascript" src="../../Extras/excanvas.js"></script><![endif]-->
@@ -47,43 +51,67 @@
 <body>
 
     <div class="container-fluid">
-        <h2 class="text-center">Huffman encoding animation via generators </h2>
+        <h2 class="text-center" style="padding-bottom:30px">
+            Huffman encoding animation via generators 
+        </h2>
 
 
         <div class="row">
-            <div class="col-md-1"></div>
-            <div class="col-md-10">
-                <div class="row">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"> Message encoding / decoding </h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="msginput" placeholder="Enter a message to encode">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" id="encodebtn">Encode</button>
-                                </span>
-                            </div>
+
+
+            <div class="col-md-9">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title text-center"> The Huffman tree </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div style="background-color:#1a1a1a;color:#ccc">
+                            <div id="infovis"></div>
                         </div>
                     </div>
                 </div>
-
-                <div class="row">
-
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"> The Huffman tree </h3>
-                        </div>
-                        <div class="panel-body">
-                            <div style="background-color:#1a1a1a;color:#ccc">
-                                <div id="infovis"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
+
+            <div class="col-md-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"> Message encoding / decoding </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="msginput" placeholder="Enter a message to encode">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" id="encodebtn">Encode</button>
+                            </span>
+                        </div>
+                        <br>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <div style="display:table">
+                                    <div style="display:inline-block">Encoded message</div>
+                                    <button style="display:inline-block; margin-left: 30px;" class="btn btn-info">
+                                        Decode
+                                    </button>
+                                </div>
+                                
+                            </div>
+                            <div class="panel-body encoded-message" id="encmsg">
+
+                            </div>
+                        </div>
+
+                        <div class="panel panel-success">
+                                <div class="panel-heading text-center">Decoded message</div>
+                                <div class="panel-body" id="decdmsg">
+    
+                                </div>
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+
 
 
         </div>
@@ -107,35 +135,35 @@
             const inputButton = document.querySelector("#encodebtn");
             const input = document.querySelector("#msginput");
             const canvas = document.querySelector("#infovis");
+            const encoded = document.querySelector("#encmsg");
             let msg = "She sells sea shells by the sea shore";
+
+            function showDecodingInConsole(){
+                let enc = huffmanEncode(input.value);
+                console.log(enc);
+                console.log("\n\n\n ------- Synchronouse decoding ------- \n\n");
+                huffmanDecodeGen(enc, elem => { console.log(elem) });
+                console.log("\n\n\n ------- Async decoding ------- \n\n");
+                huffmanDecodeGenAsync(enc, elem => { console.log(elem) });
+            }
+
+            function messageEncode(message) {
+                canvas.innerHTML = "";
+                let enc = huffmanEncode(message);
+                encoded.innerHTML = enc.encodedMessage.join(" ");
+                st = init(enc);
+            }
+
             input.value = msg;
-            let enc = huffmanEncode(msg);
-            st = init(enc);
+            messageEncode(msg);
+
 
             inputButton.addEventListener('click', function () {
-                canvas.innerHTML = "";
-                enc = huffmanEncode(input.value);
-                console.log(enc);
-                st = init(enc);
+                messageEncode(input.value)
             });
 
 
-            //console.log(huffmanTreeToJSON(enc.tree));
-
-
-
-
-
-
-            /*
-            console.log(enc);
-            console.log("\n\n\n ------- Synchronouse decoding ------- \n\n");
-            huffmanDecodeGen(enc, elem => { console.log(elem) });
-            console.log("\n\n\n ------- Async decoding ------- \n\n");
-            huffmanDecodeGenAsync(enc, elem => { console.log(elem) });
-            */
-
-
+            //showDecodingInConsole();
 
         }
 
