@@ -190,30 +190,13 @@
                     index -= row.length;
                     result += rowString;
                 });
-
-
-                /*
-                let result = "<p>";// '<div style="display:block">'
-                //result += '<div style="display:inline-block">';
-                result += message.slice(0, index - 1).join("");
-                //result += '</div>';
-                result += '<b style="color:green;display:inline-block">';
-                result += message[index];
-                result += '</b>';
-                //result += '<div style="display:inline-block">';
-                result += message.slice(index + 1).join("");
-                //result += '</div>';
-                //result += '</div>'
-                result += '</p>';
-                */
                 return result;
             }
 
             function messageEncode(message) {
                 canvas.innerHTML = "";
                 enc = huffmanEncode(message);
-                encoded.innerHTML = makeEncodedDivHTML(); //enc.encodedMessage.join(" ");
-                st = init(enc);
+                encoded.innerHTML = makeEncodedDivHTML(); 
             }
 
             function messageDecode() {
@@ -233,13 +216,6 @@
                     () => { decoded.innerHTML = result.join(""); },
                     { delay: 50 }
                 );
-
-                /*
-                huffmanDecodeGen(enc, elem => {
-                    result.push(elem);
-                });
-                */
-                //decoded.innerHTML = result.join("");
             }
 
             input.value = msg;
