@@ -204,6 +204,9 @@
                 var result = [];
                 var index = 0;
 
+                currentNodeID = null;
+                st.plot();
+
                 huffmanDecodeGenAsync(
                     enc,
                     elem => {
@@ -212,10 +215,16 @@
                             console.log(elem);
                             result.push(elem);
                             decoded.innerHTML = result.join("");
+                            if(index > 20 && index < 40){
+                                currentNodeID = "node_2";
+                            } else {
+                                currentNodeID = null;
+                            }
+                            st.plot();
                         }
                     },
                     () => { decoded.innerHTML = result.join(""); },
-                    { delay: 50 }
+                    { delay: 300 }
                 );
             }
 

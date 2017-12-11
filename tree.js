@@ -1,5 +1,7 @@
 var labelType, useGradients, nativeTextSupport, animate;
 
+var currentNodeID;
+
 (function() {
   var ua = navigator.userAgent,
       iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
@@ -119,10 +121,18 @@ function init(encodedMessage){
             //add some color to the nodes in the path between the
             //root node and the selected node.
 
+            if(node.id === currentNodeID){
+                node.data.$color =  "#006400";
+            } else {
+                node.data.$color = '#aaa';
+            }
 
             if(node.name){
                 node.data.$color = "#ff7";
             }
+
+            
+
 
             /*
 
