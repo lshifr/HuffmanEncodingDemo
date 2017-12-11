@@ -215,16 +215,6 @@ function huffmanDecodeGenAsync(encoded, action, callback, settings) {
                 action(val);
                 resolve(encmsg.shift())
             }, delay);
-            /*
-            if (isArray(val)) {
-                resolve(encmsg.shift())
-            } else {
-                setTimeout(() => {
-                    action(val);
-                    resolve(encmsg.shift())
-                }, delay);
-            }
-            */
         });
     }
 
