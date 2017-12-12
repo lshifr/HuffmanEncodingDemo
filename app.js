@@ -11,10 +11,13 @@ function ready() {
     const canvas = document.querySelector("#infovis");
     const encoded = document.querySelector("#encmsg");
     const decoded = document.querySelector("#decdmsg");
+    const stopResumeBtn = document.querySelector("#stopResumeBtn");
     const startMsg = "She sells sea shells by the sea shore";
     const delay = 2000;
 
     let enc;
+    let running = true;
+    let decoding = false;
 
     input.value = startMsg;
     messageEncode(startMsg);
@@ -31,6 +34,37 @@ function ready() {
         canvas.innerHTML = "";
     }
 
+    function pause(){
+        if(running){
+            running = false;
+            stopResumeBtn.textContent = 'Resume';
+            stopResumeBtn.classList.remove('btn-warning');
+            stopResumeBtn.classList.add('btn-success');
+        }
+    }
+
+    function resume(){
+        if(!running){
+            running = true;
+            stopResumeBtn.textContent = 'Pause';
+            stopResumeBtn.classList.add('btn-warning');
+            stopResumeBtn.classList.remove('btn-success');
+        }
+    }
+
+    function disableStopResumeButton(){
+        stopResumeBtn.disabled = true;
+        stopResumeBtn.classList.remove('btn-success');
+        stopResumeBtn.classList.remove('btn-warning');
+        stopResumeBtn.classList.add('btn-default');
+    }
+
+    function enableStopResumeButton(){
+        stopResumeBtn.disabled = false;
+        stopResumeBtn.classList.remove('btn-default');
+        stopResumeBtn.classList.add(running? 'btn-warning':'btn-success');
+    }
+
     function messageEncode(message) {
         refreshCanvas();
         enc = huffmanEncode(message);
@@ -44,22 +78,32 @@ function ready() {
         currentNodeID = null;
         st.plot();
 
-        function asyncDecodeCallback(elem, path) {
+        function updateEncodedMessageHighlighting(){
             setEncodedMessage(makeEncodedDivHTML(enc, index++));
-            currentNodeID = makeNodeID(path);
+        }
+
+        function updateDecodedMessage(){
+            setDecodedMessage(result.join(""));
+        }
+
+        function asyncDecodeStep(elem, path) {
+            updateEncodedMessageHighlighting();
+            currentNodeID = makeNodeID(path);  // Setting global variable to sync with SpaceTree rendering
             if (!isArray(elem)) {
                 result.push(elem);
-                setDecodedMessage(result.join(""));
+                updateDecodedMessage(); 
             }
-            //st.compute();
-            st.plot();
+            st.plot(); // Repaint the tree
         }
 
         huffmanDecodeGenAsync(
             enc,
-            asyncDecodeCallback,
-            () => { setDecodedMessage(result.join("")); },
-            { delay: delay }
+            (elem, path) => delayedCheckedPromiseWrap(
+                () => asyncDecodeStep(elem, path), 
+                () => running, 
+                delay
+            ),
+            () => { updateDecodedMessage(); disableStopResumeButton();},
         );
     }
 
@@ -69,8 +113,18 @@ function ready() {
     });
 
     decodeButton.addEventListener('click', function () {
+        decoding = true;
+        enableStopResumeButton();
         messageDecode(enc);
     });
+
+    stopResumeBtn.addEventListener('click', function(){
+        if(running){
+            pause();
+        } else {
+            resume();
+        }
+    })
 
     //showDecodingInConsole();
 }

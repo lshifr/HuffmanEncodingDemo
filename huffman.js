@@ -129,23 +129,18 @@ function makeAsyncTreeGenerator(){ // Need extra level to encapsulate path
  * @param {*} encoded  - the encoded object: {tree: Huffman tree, encodedMessage: [0,1,1,0,1,...]}
  * @param {*} action   - in this setting, a usual callback function taking the node and path to it
  * @param {*} callback - a callback to finalize the process
- * @param {*} settings - settings object (so far only giverns the delay)
  */
 
-function huffmanDecodeGenAsync(encoded, action, callback, settings) {
+function huffmanDecodeGenAsync(encoded, action, callback) {
     let root = encoded.tree;
     let encmsg = encoded.encodedMessage.slice();
-    let delay = (settings && settings.delay) || 1000;
 
     // A function to model async. operations happening in between Huffman tree
     // traversal steps. Returns a promise
     function asyncAction(val, path) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                action(val, path);
-                resolve(encmsg.shift())
-            }, delay);
-        });
+        return Promise
+            .resolve(action(val, path))
+            .then(() => Promise.resolve(encmsg.shift()))
     }
 
     // Coroutine helper to resolve promises and feed results back into the Huffman
@@ -153,9 +148,11 @@ function huffmanDecodeGenAsync(encoded, action, callback, settings) {
     let coroutine = (genIt, callback) => {
         const handle = (result) => {
             if(result.done){
-                return Promise.resolve(result.value).then(res => callback(res));
+                return Promise.resolve(result.value)
+                    .then(res => callback(res));
             } else{
-                return Promise.resolve(result.value).then(res => handle(genIt.next(res))) 
+                return Promise.resolve(result.value)
+                    .then(res => handle(genIt.next(res))) 
             }
             
         };

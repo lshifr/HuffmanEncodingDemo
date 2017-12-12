@@ -64,3 +64,29 @@ function partition(lst, size, step, tail) {
     }
     return res
 };
+
+function check(cond, callback, checkInterval){
+    checkInterval = checkInterval || 100; // Milliseconds
+    function nextCheck(){
+        if(cond()){
+            callback();
+        } else {
+            setTimeout(nextCheck, checkInterval);
+        }
+    }
+    nextCheck();
+}
+
+function delayedCheckedPromiseWrap(f, cond, delay){
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            check(
+                cond,
+                () => {
+                    f();
+                    resolve();
+                } 
+            )
+        }, delay);
+    });
+}
