@@ -22,7 +22,7 @@
             Huffman encoding animation using ES6 generators and promises
         </h2>
 
-        <div class="row">
+        <div class="row row-eq-height">
 
             <div class="col-md-9">
                 <div class="panel panel-success">
@@ -70,14 +70,19 @@
             <div class="col-md-3">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title"> Currently encoded message </h3>
+                        <h3 class="panel-title text-center"> Message to encode </h3>
                     </div>
                     <div class="panel-body">
                         <div class="form-group">
                             <label for="msginput">
-                                <small style="color:gray">During decoding, press Discard button to exit decoding and edit</small>
+                                <small style="color:gray; font-family:Arial, Helvetica, sans-serif; font-weight:normal">
+                                    <div style="text-align:justify">
+                                            To stop decoding / animation, press Discard button. You will then be able to edit the message. 
+                                            To start decoding process / animation again,  press Decode button.
+                                    </div>    
+                                </small>
                             </label>
-                            <textarea class="form-control" rows="3" id="msginput" placeholder="Enter a message to encode"></textarea>
+                            <textarea class="form-control input-message" rows="3" id="msginput" placeholder="Enter a message to encode"></textarea>
                         </div>
                         <br>
                         <div class="panel panel-info">
