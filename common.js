@@ -1,4 +1,4 @@
-function show(arg){
+function show(arg) {
     console.log(arg);
     return arg;
 }
@@ -65,10 +65,10 @@ function partition(lst, size, step, tail) {
     return res
 };
 
-function check(cond, callback, checkInterval){
+function check(cond, callback, checkInterval) {
     checkInterval = checkInterval || 100; // Milliseconds
-    function nextCheck(){
-        if(cond()){
+    function nextCheck() {
+        if (cond()) {
             callback();
         } else {
             setTimeout(nextCheck, checkInterval);
@@ -77,16 +77,33 @@ function check(cond, callback, checkInterval){
     nextCheck();
 }
 
-function delayedCheckedPromiseWrap(f, cond, delay){
+function delayedCheckedPromiseWrap(f, cond, failCond, delay) {
     return new Promise((resolve, reject) => {
-        setTimeout(() => {
+        let finished = false;
+        let timeoutID = setTimeout(() => {
             check(
-                cond,
+                () => cond() || failCond(),
                 () => {
-                    f();
-                    resolve();
-                } 
+                    if (cond()) {
+                        f();
+                        resolve();
+                    } else if (failCond()) {
+                        reject();
+                    }
+                    finished = true;
+                }
             )
         }, delay);
+        // The check below is needed for cases when delay is large, but we want to fail early
+        check(
+            () =>  finished || failCond(),
+            () => {
+                if (!finished) {
+                    clearTimeout(timeoutID);
+                    reject();
+                    finished = true;
+                }
+            }
+        )
     });
 }

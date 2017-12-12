@@ -5,7 +5,6 @@ var st;
 
 function ready() {
 
-    const inputButton = document.querySelector("#encodebtn");
     const decodeButton = document.querySelector("#decodebtn");
     const input = document.querySelector("#msginput");
     const canvas = document.querySelector("#infovis");
@@ -20,7 +19,7 @@ function ready() {
     let decoding = false;
 
     input.value = startMsg;
-    messageEncode(startMsg);
+
 
     function setEncodedMessage(msg) {
         encoded.innerHTML = msg;
@@ -34,8 +33,8 @@ function ready() {
         canvas.innerHTML = "";
     }
 
-    function pause(){
-        if(running){
+    function pause() {
+        if (running) {
             running = false;
             stopResumeBtn.textContent = 'Resume';
             stopResumeBtn.classList.remove('btn-warning');
@@ -43,8 +42,8 @@ function ready() {
         }
     }
 
-    function resume(){
-        if(!running){
+    function resume() {
+        if (!running) {
             running = true;
             stopResumeBtn.textContent = 'Pause';
             stopResumeBtn.classList.add('btn-warning');
@@ -52,25 +51,57 @@ function ready() {
         }
     }
 
-    function disableStopResumeButton(){
+    function disableStopResumeButton() {
         stopResumeBtn.disabled = true;
         stopResumeBtn.classList.remove('btn-success');
         stopResumeBtn.classList.remove('btn-warning');
         stopResumeBtn.classList.add('btn-default');
+        stopResumeBtn.textContent = 'Pause';
     }
 
-    function enableStopResumeButton(){
+    function enableStopResumeButton() {
         stopResumeBtn.disabled = false;
         stopResumeBtn.classList.remove('btn-default');
-        stopResumeBtn.classList.add(running? 'btn-warning':'btn-success');
+        stopResumeBtn.classList.add(running ? 'btn-warning' : 'btn-success');
     }
+
+    function decode() {
+        if (!decoding) {
+            decoding = true;
+            enableStopResumeButton();
+            messageDecode(enc);
+            decodeButton.classList.remove('btn-info');
+            decodeButton.classList.add('btn-danger');
+            decodeButton.textContent = 'Discard';
+            input.disabled = true;
+        }
+    }
+
+    function refresh() {
+        input.disabled = false;
+        enc = null;
+        messageEncode(input.value);
+        setDecodedMessage('');
+    }
+
+    function discard() {
+        decoding = false;
+        disableStopResumeButton();
+        decodeButton.classList.add('btn-info');
+        decodeButton.classList.remove('btn-danger');
+        decodeButton.textContent = 'Decode';
+        refresh();
+    }
+
 
     function messageEncode(message) {
         refreshCanvas();
         enc = huffmanEncode(message);
         setEncodedMessage(makeEncodedDivHTML(enc));
+        currentNodeID = null;
         st = initSpaceTree(enc);
     }
+
 
     function messageDecode(enc) {
         var result = [];
@@ -78,11 +109,11 @@ function ready() {
         currentNodeID = null;
         st.plot();
 
-        function updateEncodedMessageHighlighting(){
+        function updateEncodedMessageHighlighting() {
             setEncodedMessage(makeEncodedDivHTML(enc, index++));
         }
 
-        function updateDecodedMessage(){
+        function updateDecodedMessage() {
             setDecodedMessage(result.join(""));
         }
 
@@ -91,7 +122,7 @@ function ready() {
             currentNodeID = makeNodeID(path);  // Setting global variable to sync with SpaceTree rendering
             if (!isArray(elem)) {
                 result.push(elem);
-                updateDecodedMessage(); 
+                updateDecodedMessage();
             }
             st.plot(); // Repaint the tree
         }
@@ -99,32 +130,40 @@ function ready() {
         huffmanDecodeGenAsync(
             enc,
             (elem, path) => delayedCheckedPromiseWrap(
-                () => asyncDecodeStep(elem, path), 
-                () => running, 
+                () => asyncDecodeStep(elem, path),
+                () => running,
+                () => !decoding,
                 delay
             ),
-            () => { updateDecodedMessage(); disableStopResumeButton();},
+            () => { updateDecodedMessage(); disableStopResumeButton(); },
+            () => { discard(); }
         );
     }
 
-    inputButton.addEventListener('click', function () {
-        messageEncode(input.value);
-        setDecodedMessage("");
-    });
-
     decodeButton.addEventListener('click', function () {
-        decoding = true;
-        enableStopResumeButton();
-        messageDecode(enc);
+        if (!decoding) {
+            decode();
+        } else {
+            //discard();
+            decoding = false;
+        }
     });
 
-    stopResumeBtn.addEventListener('click', function(){
-        if(running){
+    stopResumeBtn.addEventListener('click', function () {
+        if (running) {
             pause();
         } else {
             resume();
         }
+    });
+
+    input.addEventListener('keyup', function(){
+        messageEncode(input.value);
+        setDecodedMessage("");
     })
+
+    refresh();
+    decode();
 
     //showDecodingInConsole();
 }

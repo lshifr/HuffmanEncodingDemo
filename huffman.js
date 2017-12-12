@@ -131,7 +131,7 @@ function makeAsyncTreeGenerator(){ // Need extra level to encapsulate path
  * @param {*} callback - a callback to finalize the process
  */
 
-function huffmanDecodeGenAsync(encoded, action, callback) {
+function huffmanDecodeGenAsync(encoded, action, callback, stopCallback) {
     let root = encoded.tree;
     let encmsg = encoded.encodedMessage.slice();
 
@@ -145,14 +145,16 @@ function huffmanDecodeGenAsync(encoded, action, callback) {
 
     // Coroutine helper to resolve promises and feed results back into the Huffman
     // tree traversal generator
-    let coroutine = (genIt, callback) => {
+    let coroutine = (genIt) => {
         const handle = (result) => {
             if(result.done){
                 return Promise.resolve(result.value)
-                    .then(res => callback(res));
+                    .then(callback)
+                    .catch(stopCallback);
             } else{
                 return Promise.resolve(result.value)
-                    .then(res => handle(genIt.next(res))) 
+                    .then(res => handle(genIt.next(res)))
+                    .catch(stopCallback); 
             }
             
         };
@@ -160,7 +162,7 @@ function huffmanDecodeGenAsync(encoded, action, callback) {
     }
 
     // Main call
-    coroutine(makeAsyncTreeGenerator()(root, root, encmsg.shift(), asyncAction), callback);
+    coroutine(makeAsyncTreeGenerator()(root, root, encmsg.shift(), asyncAction));
 }
 
 

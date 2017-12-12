@@ -27,19 +27,34 @@
             <div class="col-md-9">
                 <div class="panel panel-success">
                     <div class="panel-heading text-center">Decoded message</div>
-                    <div class="panel-body decoded-message" id="decdmsg">
+                    <div class="panel-body decoded-message" id="decdmsg" style="height:70px;">
 
                     </div>
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
+                            <div class="panel-title col-md-9">
+                                <div class="row">
+                                    <div class="col-md-6"></div>
+                                    <h3 class="panel-title text-center col-md-4"> The Huffman tree </h3>
+                                    <div class="col-md-2"></div>
+                                </div>
 
-                            <h3 class="panel-title text-center col-md-9"> The Huffman tree </h3>
-                            <div class="col-md-3" style="display:table">
-                                <button style="display:inline-block; margin-left: 30px;" class="btn-default btn-small" id="stopResumeBtn" disabled>
-                                    Pause
-                                </button>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="row">
+                                    <button class="btn-default btn-small col-md-5" id="stopResumeBtn" disabled>
+                                        Pause
+                                    </button>
+                                    <div class="col-md-1"></div>
+                                    <button class="btn-small btn-info col-md-5" id="decodebtn">
+                                        Decode
+                                    </button>
+                                    <div class="col-md-1"></div>
+                                </div>
+
                             </div>
 
                         </div>
@@ -55,23 +70,21 @@
             <div class="col-md-3">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title"> Message encoding / decoding </h3>
+                        <h3 class="panel-title"> Currently encoded message </h3>
                     </div>
                     <div class="panel-body">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="msginput" placeholder="Enter a message to encode">
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" id="encodebtn">Encode</button>
-                            </span>
+                        <div class="form-group">
+                            <label for="msginput">
+                                <small style="color:gray">During decoding, press Discard button to exit decoding and edit</small>
+                            </label>
+                            <textarea class="form-control" rows="3" id="msginput" placeholder="Enter a message to encode"></textarea>
                         </div>
                         <br>
                         <div class="panel panel-info">
                             <div class="panel-heading">
                                 <div style="display:table">
                                     <div style="display:inline-block">Encoded message</div>
-                                    <button style="display:inline-block; margin-left: 30px;" class="btn btn-info" id="decodebtn">
-                                        Decode
-                                    </button>
+
                                 </div>
 
                             </div>
