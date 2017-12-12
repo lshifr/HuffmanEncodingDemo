@@ -34,7 +34,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
-                            <div class="panel-title col-md-9">
+                            <div class="panel-title col-md-7">
                                 <div class="row">
                                     <div class="col-md-6"></div>
                                     <h3 class="panel-title text-center col-md-4"> The Huffman tree </h3>
@@ -43,16 +43,26 @@
 
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-5">
                                 <div class="row">
-                                    <button class="btn-default btn-small col-md-5" id="stopResumeBtn" disabled>
+                                    <div class="form-group col-md-4">
+                                        <select class="form-control input-sm" id="speedSelect">
+                                            <option>Very fast</option>
+                                            <option>Fast</option>
+                                            <option>Medium</option>
+                                            <option selected>Slow</option>
+                                            <option>Very slow</option>
+                                        </select>
+                                    </div>
+                                   
+                                    <button class="btn-default btn-small col-md-3" id="stopResumeBtn" disabled>
                                         Pause
                                     </button>
                                     <div class="col-md-1"></div>
-                                    <button class="btn-small btn-info col-md-5" id="decodebtn">
+                                    <button class="btn-small btn-info col-md-3" id="decodebtn">
                                         Decode
                                     </button>
-                                    <div class="col-md-1"></div>
+                                    
                                 </div>
 
                             </div>
@@ -77,9 +87,9 @@
                             <label for="msginput">
                                 <small style="color:gray; font-family:Arial, Helvetica, sans-serif; font-weight:normal">
                                     <div style="text-align:justify">
-                                            To stop decoding / animation, press Discard button. You will then be able to edit the message. 
-                                            To start decoding process / animation again,  press Decode button.
-                                    </div>    
+                                        To stop decoding / animation, press Discard button. You will then be able to edit the message. To start decoding process
+                                        / animation again, press Decode button.
+                                    </div>
                                 </small>
                             </label>
                             <textarea class="form-control input-message" rows="3" id="msginput" placeholder="Enter a message to encode"></textarea>

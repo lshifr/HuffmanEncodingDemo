@@ -11,14 +11,16 @@ function ready() {
     const encoded = document.querySelector("#encmsg");
     const decoded = document.querySelector("#decdmsg");
     const stopResumeBtn = document.querySelector("#stopResumeBtn");
+    const speedSelect = document.querySelector("#speedSelect");
     const startMsg = "She sells sea shells by the sea shore";
-    const delay = 2000;
-
+    
+    let delay;
     let enc;
     let running = true;
     let decoding = false;
 
     input.value = startMsg;
+    speedSelect.value = "Slow";
 
 
     function setEncodedMessage(msg) {
@@ -31,6 +33,17 @@ function ready() {
 
     function refreshCanvas() {
         canvas.innerHTML = "";
+    }
+
+    function updateDelay(){
+        let delays = {
+            'Very slow': 4000,
+            'Slow': 2000,
+            'Medium': 1000,
+            'Fast': 500,
+            'Very fast': 200
+        };
+        delay = delays[speedSelect.value];
     }
 
     function pause() {
@@ -161,8 +174,11 @@ function ready() {
     input.addEventListener('keyup', function(){
         messageEncode(input.value);
         setDecodedMessage("");
-    })
+    });
 
+    speedSelect.addEventListener('change', updateDelay);
+
+    updateDelay();
     refresh(true);
     decode();
 
