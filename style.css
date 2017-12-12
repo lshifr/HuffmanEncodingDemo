@@ -12,19 +12,21 @@
 }
 
 .encoded-message {
-    font-size: 25px;
+    font-size: 20px;
 }
 
 .highlight-step {
     color:green; 
     font-weight:bold; 
-    background-color:#FFDAB9;
+    background-color:rgb(153, 202, 143);
     border-radius: 4px;
+    padding: 2px;
 }
 
 .decoded-message{
     font-size:30px;
-    color: rgb(133, 48, 63);
+    /* color: rgb(133, 48, 63); */
+    color: rgb(78, 23, 114);
 }
 
 .input-message{

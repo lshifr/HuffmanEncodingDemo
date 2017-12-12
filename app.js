@@ -196,7 +196,7 @@ function showDecodingInConsole() {  // A helper function
 
 function makeEncodedDivHTML(enc, index) {
     let message = enc.encodedMessage;
-    let digitsPerRow = 10;
+    let digitsPerRow = 13;
     let partit = partition(message, digitsPerRow, digitsPerRow, true);
     let result = '';
     let ctr = 0;

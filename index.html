@@ -18,7 +18,7 @@
 <body>
 
     <div class="container-fluid">
-        <h2 class="text-center" style="padding-bottom:30px">
+        <h2 class="text-center" style="padding-bottom:30px; color:rgb(128, 126, 126)">
             Huffman encoding animation using ES6 generators and promises
         </h2>
 
@@ -26,7 +26,9 @@
 
             <div class="col-md-9">
                 <div class="panel panel-success">
-                    <div class="panel-heading text-center">Decoded message</div>
+                    <div class="panel-heading text-center" style="font-size: 18px;">
+                        Decoded message
+                    </div>
                     <div class="panel-body decoded-message" id="decdmsg" style="height:70px;">
 
                     </div>
@@ -37,7 +39,7 @@
                             <div class="panel-title col-md-7">
                                 <div class="row">
                                     <div class="col-md-6"></div>
-                                    <h3 class="panel-title text-center col-md-4"> The Huffman tree </h3>
+                                    <h3 class="panel-title pull-right col-md-4"> The Huffman tree </h3>
                                     <div class="col-md-2"></div>
                                 </div>
 
@@ -54,7 +56,7 @@
                                             <option>Very slow</option>
                                         </select>
                                     </div>
-                                   
+
                                     <button class="btn-default btn-small col-md-3" id="stopResumeBtn" disabled>
                                         Pause
                                     </button>
@@ -62,7 +64,7 @@
                                     <button class="btn-small btn-info col-md-3" id="decodebtn">
                                         Decode
                                     </button>
-                                    
+
                                 </div>
 
                             </div>
@@ -84,6 +86,7 @@
                     </div>
                     <div class="panel-body">
                         <div class="form-group">
+                            <textarea class="form-control input-message" rows="3" id="msginput" placeholder="Enter a message to encode"></textarea>
                             <label for="msginput">
                                 <small style="color:gray; font-family:Arial, Helvetica, sans-serif; font-weight:normal">
                                     <div style="text-align:justify">
@@ -92,7 +95,6 @@
                                     </div>
                                 </small>
                             </label>
-                            <textarea class="form-control input-message" rows="3" id="msginput" placeholder="Enter a message to encode"></textarea>
                         </div>
                         <br>
                         <div class="panel panel-info">
