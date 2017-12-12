@@ -77,22 +77,24 @@ function ready() {
         }
     }
 
-    function refresh() {
+    function refresh(clearDecodedMessageOutput) {
         input.disabled = false;
-        enc = null;
-        messageEncode(input.value);
-        setDecodedMessage('');
+        if(clearDecodedMessageOutput){
+            enc = null;
+            messageEncode(input.value);
+            setDecodedMessage('');
+        }
     }
 
-    function discard() {
+    function discard(clearDecodedMessageOutput) {
         decoding = false;
+        running = true;
         disableStopResumeButton();
         decodeButton.classList.add('btn-info');
         decodeButton.classList.remove('btn-danger');
         decodeButton.textContent = 'Decode';
-        refresh();
+        refresh(clearDecodedMessageOutput);
     }
-
 
     function messageEncode(message) {
         refreshCanvas();
@@ -101,7 +103,6 @@ function ready() {
         currentNodeID = null;
         st = initSpaceTree(enc);
     }
-
 
     function messageDecode(enc) {
         var result = [];
@@ -135,8 +136,8 @@ function ready() {
                 () => !decoding,
                 delay
             ),
-            () => { updateDecodedMessage(); disableStopResumeButton(); },
-            () => { discard(); }
+            () => { updateDecodedMessage(); discard(false); },
+            () => { discard(true); }
         );
     }
 
@@ -162,7 +163,7 @@ function ready() {
         setDecodedMessage("");
     })
 
-    refresh();
+    refresh(true);
     decode();
 
     //showDecodingInConsole();
